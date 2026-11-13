@@ -1,0 +1,1052 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kirti Dhingra | Interactive Resume Prototype</title>
+<meta name="author" content="Kirti Dhingra">
+<style>
+  :root {
+    --bg: #F6F5F2;
+    --surface: #FFFFFF;
+    --ink: #111315;
+    --ink-secondary: #22262A;
+    --border: #111315;
+    --focus-ring: #111315;
+    --shadow: 0 4px 0 #111315;
+    --shadow-hover: 0 7px 0 #111315;
+    --overlay: rgba(17, 19, 21, 0.72);
+
+    /* Vibrant multi-craft palette with verified >= 6.8:1 contrast against #111315 */
+    --c-coral: #FF8A7A;
+    --c-orange: #FFA94D;
+    --c-yellow: #FFE055;
+    --c-purple: #C89EFF;
+    --c-blue: #6EC8FF;
+    --c-green: #5CE09B;
+
+    --tile-ink: #111315;
+    --tile-sub: #1C2024;
+    --pill-bg: rgba(255, 255, 255, 0.78);
+    --pill-border: #111315;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #121316;
+      --surface: #1D1F24;
+      --ink: #F5F7FA;
+      --ink-secondary: #D5DBE3;
+      --border: #F5F7FA;
+      --focus-ring: #FFE055;
+      --shadow: 0 4px 0 #000000;
+      --shadow-hover: 0 7px 0 #000000;
+      --overlay: rgba(5, 6, 8, 0.82);
+
+      /* High-contrast vibrant tiles in dark mode retain #111315 ink for >6.8:1 contrast */
+      --c-coral: #FF8A7A;
+      --c-orange: #FFA94D;
+      --c-yellow: #FFE055;
+      --c-purple: #C89EFF;
+      --c-blue: #6EC8FF;
+      --c-green: #5CE09B;
+
+      --tile-ink: #111315;
+      --tile-sub: #1C2024;
+      --pill-bg: rgba(255, 255, 255, 0.82);
+      --pill-border: #111315;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #121316;
+    --surface: #1D1F24;
+    --ink: #F5F7FA;
+    --ink-secondary: #D5DBE3;
+    --border: #F5F7FA;
+    --focus-ring: #FFE055;
+    --shadow: 0 4px 0 #000000;
+    --shadow-hover: 0 7px 0 #000000;
+    --overlay: rgba(5, 6, 8, 0.82);
+
+    --c-coral: #FF8A7A;
+    --c-orange: #FFA94D;
+    --c-yellow: #FFE055;
+    --c-purple: #C89EFF;
+    --c-blue: #6EC8FF;
+    --c-green: #5CE09B;
+
+    --tile-ink: #111315;
+    --tile-sub: #1C2024;
+    --pill-bg: rgba(255, 255, 255, 0.82);
+    --pill-border: #111315;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.45;
+    overflow-x: hidden;
+  }
+
+  .page-wrap {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 18px 20px 48px;
+  }
+
+  /* Header Bar */
+  .top-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    padding-bottom: 14px;
+    margin-bottom: 14px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .identity h1 {
+    font-size: clamp(1.85rem, 3.5vw, 2.75rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 0 0 2px 0;
+    line-height: 1.1;
+  }
+
+  .identity .headline {
+    font-size: clamp(1rem, 1.6vw, 1.2rem);
+    font-weight: 700;
+    color: var(--ink-secondary);
+    margin: 0 0 6px 0;
+  }
+
+  .identity .summary {
+    max-width: none;
+    font-size: 0.95rem;
+    line-height: 1.45;
+    color: var(--ink-secondary);
+    margin: 0 0 6px 0;
+  }
+
+  .identity .core-line {
+    max-width: none;
+    font-size: 0.88rem;
+    line-height: 1.45;
+    color: var(--ink-secondary);
+    margin: 0;
+  }
+
+  .header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 2px solid var(--border);
+    background: var(--surface);
+    color: var(--ink);
+    font-weight: 700;
+    font-size: 0.92rem;
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: transform 0.16s ease, box-shadow 0.16s ease;
+  }
+
+  .action-btn.primary {
+    background: var(--c-yellow);
+    color: #111315;
+    border-color: #111315;
+  }
+
+  .action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .action-btn:focus-visible,
+  .bento-tile:focus-visible,
+  .modal-close:focus-visible,
+  .modal-body a:focus-visible {
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 3px;
+  }
+
+  /* Filter / Instruction Bar */
+  .hint-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+    font-size: 0.9rem;
+    color: var(--ink-secondary);
+    font-weight: 600;
+  }
+
+  /* Bento Grid */
+  .bento-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 16px;
+  }
+
+  .bento-tile {
+    appearance: none;
+    -webkit-appearance: none;
+    text-align: left;
+    font-family: inherit;
+    color: var(--tile-ink);
+    border: 2.5px solid #111315;
+    border-radius: 18px;
+    padding: 22px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 215px;
+    box-shadow: var(--shadow);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .bento-tile:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .bento-tile[aria-expanded="true"] {
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  /* Tile Spans (12-column desktop bento) */
+  .span-6 { grid-column: span 6; }
+  .span-4 { grid-column: span 4; }
+  .span-8 { grid-column: span 8; }
+  .span-12 { grid-column: span 12; }
+
+  /* Palette classes */
+  .tone-coral  { background-color: var(--c-coral); }
+  .tone-orange { background-color: var(--c-orange); }
+  .tone-yellow { background-color: var(--c-yellow); }
+  .tone-purple { background-color: var(--c-purple); }
+  .tone-blue   { background-color: var(--c-blue); }
+  .tone-green  { background-color: var(--c-green); }
+
+  .tile-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 12px;
+  }
+
+  .tile-date {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--pill-bg);
+    border: 1.5px solid var(--pill-border);
+    color: #111315;
+    letter-spacing: 0.01em;
+  }
+
+  .tile-cta {
+    font-size: 0.8rem;
+    font-weight: 800;
+    padding: 4px 9px;
+    border-radius: 8px;
+    background: var(--pill-bg);
+    border: 1.5px solid var(--pill-border);
+    color: #111315;
+    white-space: nowrap;
+  }
+
+  .tile-metric {
+    font-size: clamp(2rem, 3.4vw, 2.85rem);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin: 4px 0 6px 0;
+    color: var(--tile-ink);
+  }
+
+  .tile-metric-label {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--tile-sub);
+    margin: 0 0 14px 0;
+  }
+
+  .tile-title {
+    font-size: 1.18rem;
+    font-weight: 800;
+    margin: 0 0 4px 0;
+    color: var(--tile-ink);
+  }
+
+  .tile-subtitle {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--tile-sub);
+    margin: 0;
+  }
+
+  /* Modal / Expanded Drawer */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: var(--overlay);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.16s ease, visibility 0.16s ease;
+  }
+
+  .modal-backdrop.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .modal-dialog {
+    background: var(--surface);
+    color: var(--ink);
+    border: 3px solid var(--border);
+    border-radius: 20px;
+    max-width: 780px;
+    width: 100%;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 12px 0 #111315;
+    transform: translateY(10px) scale(0.98);
+    transition: transform 0.18s ease;
+    overflow: hidden;
+  }
+
+  .modal-backdrop.is-open .modal-dialog {
+    transform: translateY(0) scale(1);
+  }
+
+  .modal-header {
+    padding: 20px 24px;
+    border-bottom: 2px solid #111315;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    color: #111315;
+  }
+
+  .modal-header-text .modal-date {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.82);
+    border: 1.5px solid #111315;
+    margin-bottom: 8px;
+  }
+
+  .modal-header-text h2 {
+    margin: 0 0 4px 0;
+    font-size: 1.45rem;
+    font-weight: 800;
+  }
+
+  .modal-header-text p {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
+
+  .modal-close {
+    background: #FFFFFF;
+    color: #111315;
+    border: 2px solid #111315;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-weight: 800;
+    font-size: 0.88rem;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .modal-body {
+    padding: 22px 24px 26px;
+    overflow-y: auto;
+    font-size: 0.98rem;
+  }
+
+  .role-badge-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--ink-secondary);
+  }
+
+  .role-badge {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 6px;
+    font-size: 0.92rem;
+  }
+
+  .role-badge strong {
+    font-weight: 800;
+  }
+
+  .role-badge span {
+    color: var(--ink-secondary);
+    font-weight: 600;
+  }
+
+  .role-desc {
+    margin: 2px 0 6px 0;
+    font-size: 0.88rem;
+    color: var(--ink-secondary);
+  }
+
+  .modal-body ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+
+  .modal-body li {
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+
+  .modal-body a {
+    color: var(--ink);
+    font-weight: 700;
+    text-decoration: underline;
+  }
+
+  .contact-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 14px;
+  }
+
+  .contact-link-card {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg);
+    color: var(--ink);
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  /* Responsive Mobile Layout */
+  @media (max-width: 900px) {
+    .span-6, .span-4, .span-8, .span-12 {
+      grid-column: span 6;
+    }
+    .bento-grid {
+      grid-template-columns: repeat(6, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .page-wrap {
+      padding: 18px 14px 44px;
+    }
+    .bento-grid {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    .span-6, .span-4, .span-8, .span-12 {
+      grid-column: span 1;
+    }
+    .bento-tile {
+      min-height: auto;
+      padding: 18px;
+    }
+    .modal-backdrop {
+      padding: 12px;
+    }
+    .modal-header {
+      padding: 16px;
+    }
+    .modal-body {
+      padding: 16px;
+    }
+  }
+
+  /* Reduced Motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+    .bento-tile:hover,
+    .action-btn:hover {
+      transform: none;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+  <header class="top-header">
+    <div class="identity">
+      <h1>Kirti Dhingra</h1>
+      <p class="headline">Enterprise Solutions Consulting &nbsp;|&nbsp; Product, Design and Developer Workflows, Security and AI</p>
+      <p class="summary">
+        Product leader with 12 years at Google in Sydney and Singapore, in Product since late 2024 after 10 years in enterprise solutions architecture and pre-sales solutions consulting across AU/NZ and APAC. Partnered with Sales to lead technical discovery, product demonstrations and evaluations for Australia's largest enterprises including Woolworths, Coles, Wesfarmers, Kmart and Officeworks. Most recently ran Google's central identity and KYC platform, aligning Product, Engineering, legal and CISO security teams and using AI-assisted prototyping to pull platform migration ROI forward by 12 months. Began as a software engineer and holds an Engineering degree in IT and an MBA.
+      </p>
+      <p class="core-line">
+        <strong>Core expertise</strong> in enterprise solutions consulting, product demonstrations and technical evaluations, bridging Product, Design and Engineering workflows, front-end HTML and AI prototyping, developer lifecycle, enterprise IT and CISO security alignment, and product roadmap influence.
+      </p>
+    </div>
+    <div class="header-actions">
+      <a class="action-btn primary" href="Kirti_Dhingra_Resume_Figma.pdf" download="Kirti_Dhingra_Resume_Figma.pdf">
+        Download Resume PDF
+      </a>
+      <button type="button" class="action-btn" id="themeToggle" aria-label="Toggle colour theme">
+        Theme: Auto
+      </button>
+    </div>
+  </header>
+
+  <div class="hint-bar">
+    <span>Select any tile (or press Enter / Space) to inspect the underlying evidence. Press Esc to close.</span>
+    <span>Australian citizen &bull; Sydney</span>
+  </div>
+
+  <main class="bento-grid" aria-label="Interactive Resume Bento Grid">
+    <!-- 1. Google Product 2024 to 2026 -->
+    <button type="button" class="bento-tile span-6 tone-purple" data-bucket="google-product" aria-expanded="false">
+      <div class="tile-top">
+        <span class="tile-date">2024 &ndash; 2026</span>
+        <span class="tile-cta">View 7 proof points +</span>
+      </div>
+      <div>
+        <div class="tile-metric">12 months</div>
+        <p class="tile-metric-label">Pulled platform migration ROI forward via AI prototyping</p>
+        <h2 class="tile-title">Google Product</h2>
+        <p class="tile-subtitle">Product Manager, Payments Identity Platform &amp; Google Shopping (Sydney)</p>
+      </div>
+    </button>
+
+    <!-- 2. Google Ad Solutions Architect, Sydney 2018 to 2024 -->
+    <button type="button" class="bento-tile span-6 tone-coral" data-bucket="google-asa" aria-expanded="false">
+      <div class="tile-top">
+        <span class="tile-date">2018 &ndash; 2024</span>
+        <span class="tile-cta">View 10 proof points +</span>
+      </div>
+      <div>
+        <div class="tile-metric">$80M</div>
+        <p class="tile-metric-label">Incremental revenue across 90% of target AU/NZ retailers</p>
+        <h2 class="tile-title">Google Ad Solutions Architect, Sydney</h2>
+        <p class="tile-subtitle">Ad Solutions Architect Lead, Retail &amp; Ad Solutions Architect, Retail</p>
+      </div>
+    </button>
+
+    <!-- 3. Google Senior Solutions Consultant, Singapore 2014 to 2018 -->
+    <button type="button" class="bento-tile span-4 tone-blue" data-bucket="google-ssc" aria-expanded="false">
+      <div class="tile-top">
+        <span class="tile-date">2014 &ndash; 2018</span>
+        <span class="tile-cta">View evidence +</span>
+      </div>
+      <div>
+        <div class="tile-metric">$50M</div>
+        <p class="tile-metric-label">New revenue across Southeast Asia via technical pre-sales</p>
+        <h2 class="tile-title">Google Senior Solutions Consultant</h2>
+        <p class="tile-subtitle">Senior Solutions Consultant, Display Advertising (Singapore)</p>
+      </div>
+    </button>
+
+    <!-- 4. Yahoo! India 2011 to 2014 -->
+    <button type="button" class="bento-tile span-4 tone-orange" data-bucket="yahoo" aria-expanded="false">
+      <div class="tile-top">
+        <span class="tile-date">2011 &ndash; 2014</span>
+        <span class="tile-cta">View evidence +</span>
+      </div>
+      <div>
+        <div class="tile-metric">$20M</div>
+        <p class="tile-metric-label">Incremental revenue launching Yahoo! Smart Ads</p>
+        <h2 class="tile-title">Yahoo! India</h2>
+        <p class="tile-subtitle">Program Manager, Display Ads (New Delhi)</p>
+      </div>
+    </button>
+
+    <!-- 5. Capgemini Engineering 2005 to 2008 -->
+    <button type="button" class="bento-tile span-4 tone-green" data-bucket="capgemini" aria-expanded="false">
+      <div class="tile-top">
+        <span class="tile-date">2005 &ndash; 2008</span>
+        <span class="tile-cta">View evidence +</span>
+      </div>
+      <div>
+        <div class="tile-metric">3 years</div>
+        <p class="tile-metric-label">C on Linux/Solaris for SS7 &amp; Symbian OS on TI OMAP</p>
+        <h2 class="tile-title">Capgemini Engineering</h2>
+        <p class="tile-subtitle">Senior Software Engineer (New Delhi and Dallas)</p>
+      </div>
+    </button>
+
+    <!-- 6. Education -->
+    <button type="button" class="bento-tile span-4 tone-yellow" data-bucket="education" aria-expanded="false">
+      <div class="tile-top">
+        <span class="tile-date">Education</span>
+        <span class="tile-cta">View degrees +</span>
+      </div>
+      <div>
+        <div class="tile-metric">2 degrees</div>
+        <p class="tile-metric-label">MBA (UNSW Sydney &amp; Kellogg exchange) + BE in IT (MIT Manipal)</p>
+        <h2 class="tile-title">Education</h2>
+        <p class="tile-subtitle">UNSW Sydney, Kellogg School of Management &amp; Manipal Institute of Technology</p>
+      </div>
+    </button>
+
+    <!-- 7. Awards and recognition -->
+    <button type="button" class="bento-tile span-4 tone-coral" data-bucket="awards" aria-expanded="false">
+      <div class="tile-top">
+        <span class="tile-date">2014 &ndash; 2026</span>
+        <span class="tile-cta">View awards +</span>
+      </div>
+      <div>
+        <div class="tile-metric">~150 awards</div>
+        <p class="tile-metric-label">Internal awards at Google plus AI Hackathon &amp; Hack-a-gTech wins</p>
+        <h2 class="tile-title">Awards and Recognition</h2>
+        <p class="tile-subtitle">Business impact, community impact &amp; new product innovation</p>
+      </div>
+    </button>
+
+    <!-- 8. Builds and writing -->
+    <button type="button" class="bento-tile span-4 tone-purple" data-bucket="builds" aria-expanded="false">
+      <div class="tile-top">
+        <span class="tile-date">Open Source &amp; Writing</span>
+        <span class="tile-cta">View builds +</span>
+      </div>
+      <div>
+        <div class="tile-metric">50,000+</div>
+        <p class="tile-metric-label">Alphabet employees used Lunch Ninja; plus MA(h)GIC &amp; Substack</p>
+        <h2 class="tile-title">Builds and Writing</h2>
+        <p class="tile-subtitle">MA(h)GIC, token-optimizer, Everyday AgentiK Substack &amp; Lunch Ninja</p>
+      </div>
+    </button>
+
+    <!-- 9. Interests -->
+    <button type="button" class="bento-tile span-4 tone-green" data-bucket="interests" aria-expanded="false">
+      <div class="tile-top">
+        <span class="tile-date">Personal</span>
+        <span class="tile-cta">View details +</span>
+      </div>
+      <div>
+        <div class="tile-metric">40+ countries</div>
+        <p class="tile-metric-label">Across six continents including Antarctica, mostly solo</p>
+        <h2 class="tile-title">Interests</h2>
+        <p class="tile-subtitle">Solo travel, health, wellness and sport</p>
+      </div>
+    </button>
+
+    <!-- 10. Contact -->
+    <button type="button" class="bento-tile span-4 tone-blue" data-bucket="contact" aria-expanded="false">
+      <div class="tile-top">
+        <span class="tile-date">Sydney, AU</span>
+        <span class="tile-cta">Open links +</span>
+      </div>
+      <div>
+        <div class="tile-metric">2 links</div>
+        <p class="tile-metric-label">LinkedIn &amp; GitHub profiles plus PDF resume download</p>
+        <h2 class="tile-title">Contact</h2>
+        <p class="tile-subtitle">Australian citizen based in Sydney</p>
+      </div>
+    </button>
+
+    <!-- 11. How I designed this page -->
+    <button type="button" class="bento-tile span-4 tone-yellow" data-bucket="design-notes" aria-expanded="false">
+      <div class="tile-top">
+        <span class="tile-date">Design Thinking</span>
+        <span class="tile-cta">Read decisions +</span>
+      </div>
+      <div>
+        <div class="tile-metric">4.5:1+</div>
+        <p class="tile-metric-label">WCAG AA contrast across every colour token, keyboard-native</p>
+        <h2 class="tile-title">How I Designed This Page</h2>
+        <p class="tile-subtitle">Three decisions behind this interactive prototype</p>
+      </div>
+    </button>
+  </main>
+</div>
+
+<!-- Accessible Modal Dialog -->
+<div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-hidden="true">
+  <div class="modal-dialog" id="modalDialog">
+    <div class="modal-header" id="modalHeader">
+      <div class="modal-header-text">
+        <span class="modal-date" id="modalDate"></span>
+        <h2 id="modalTitle"></h2>
+        <p id="modalMetricLine"></p>
+      </div>
+      <button type="button" class="modal-close" id="modalCloseBtn" aria-label="Close details">
+        Esc &times;
+      </button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+  const BUCKETS = {
+    "google-product": {
+      title: "Google Product",
+      date: "2024 – 2026",
+      tone: "tone-purple",
+      metricLine: "12 months faster time to ROI on Google's KYC review platform migration",
+      roles: [
+        {
+          title: "Product Manager, Payments Identity Platform",
+          meta: "Sydney, AU | 2025 – 2026",
+          desc: "Central identity and KYC platform serving Cloud, Ads, Shopping and Play across regulated markets."
+        },
+        {
+          title: "Product Manager, Google Shopping",
+          meta: "Sydney, AU | 2024 – 2025",
+          desc: "AI-powered pricing insights and merchant notifications for Shopping advertisers."
+        }
+      ],
+      bullets: [
+        "Accelerated time to ROI by 12 months on migrating Google's KYC review tooling to a modern task-based platform, using AI-assisted prototyping to generate UX variants and code-level specs that engineers tested in sandboxes. Replaced a 100% feature-parity requirement with a phased rollout, and cutting average review duration 45.8%, from 59 seconds to 32 seconds, in the Brazil pilot.",
+        "Owned and launched automated national ID verification for Google Cloud in India, the top-priority launch on the Google Payments Platform in 2026. Wrote the strategy memo and PRD for a decoupled architecture around strict three-minute data purge and data-localisation requirements, took 20+ stakeholders across CISO, legal, compliance, engineering and Cloud through security and launch review, lifted automated verification from 0% to 33%, cut manual reviews 75% and saved about $250k a year.",
+        "Drove an 8.2x increase in merchant adoption of Google Shopping's AI-powered Sale Price Suggestions by designing and launching a proactive notification workflow across Merchant Center and email, scaling from 1% to 50% of merchants.",
+        "Built an interactive front-end HTML matching-logic simulator with AI coding tools that exposed defects in an external vendor's V1 API before launch, letting engineering validate and approve V2 for production.",
+        "Partnered with the Google Cloud CISO to align manual security review policies with automated platform standards, projected to cut operations handling time by 50%.",
+        "Authored the PRD to move Ad Exchange (AdX) real-time bidding partner verification onto Google's central identity platform to strengthen account data controls, projected to cut operational effort by over 80% and save $137k a year.",
+        "Authored the Singapore Payment Services Act options memo comparing three customer due diligence architectures across a government API, verifiable credentials and an aggregator, securing alignment on a Bring-Your-Own-Key hybrid design to prevent developer onboarding drop-off."
+      ]
+    },
+    "google-asa": {
+      title: "Google Ad Solutions Architect, Sydney",
+      date: "2018 – 2024",
+      tone: "tone-coral",
+      metricLine: "$80M in incremental revenue across 90% of target AU/NZ enterprise retailers",
+      roles: [
+        {
+          title: "Ad Solutions Architect Lead, Retail",
+          meta: "Sydney, AU | 2021 – 2024",
+          desc: "Technical architecture and commerce growth strategy for AU/NZ's largest retail enterprises."
+        },
+        {
+          title: "Ad Solutions Architect, Retail",
+          meta: "Sydney, AU | 2018 – 2021",
+          desc: "AU/NZ technical lead, where AU/NZ reached the world's highest omnichannel ads penetration at 31%."
+        }
+      ],
+      bullets: [
+        "Led the AU/NZ Google Supply Chain Program across 90% of target enterprise retailers, defining evaluation success criteria, bringing 4M more products online, adding $80M in incremental revenue and featuring in $250M of joint business plans.",
+        "Architected and delivered a Content API and regional pricing integration with Officeworks that cut developer data refresh latency from 24 hours to 15 minutes and grew SKUs 50%, incremental search revenue 10% and ROAS 15% in three months (<a href=\"https://athoscommerce.com/case-studies/officeworks/\" target=\"_blank\" rel=\"noopener\">case study</a>).",
+        "Managed a $200k partner co-funding program and annual contracts across AU/NZ, moving partner pitch rates from 40% to 80% and adding 3.6M incremental SKUs. Delivered a solution showcase to Feedonomics' C-suite and earned an endorsement from the CEO of Intelligent Reach after it built a Content API platform for Myer, Officeworks, Dan Murphy's and David Jones.",
+        "Ran a Peak Season executive showcase and workshop for 170 customer and agency attendees (+70% year on year) that lifted solution awareness 37.5% on pre and post measurement and tied to $20M in revenue.",
+        "Restructured Catch.com.au's marketplace architecture to one merchant account per seller after a major account suspension, isolating seller policy risk and supporting a $20.3M joint business plan (+62% year on year).",
+        "Helped launch Regional Pricing and Availability in Australia by connecting customer engineering teams with Google Product through the beta, letting retailers advertise twice as many products and adding $10M in annual spend, with Kmart reporting $800k a month in incremental revenue.",
+        "Increased client investment by 50% by proving the ROI of Value-Based Bidding and feed integrations through three published case studies, then scaling the program from EMEA to APAC.",
+        "Saved about 11 FTEs globally by designing and running vendorization programs for tag, feed and campaign integration work across APAC, EMEA and the Americas.",
+        "Built Project Magnet, an automated competitive insights tool comparing the top 50 Search, Video and Display advertisers, uncovering a $500k opportunity at REA Group and winning an internal automation award.",
+        "Trained incoming technical specialists across AU/NZ, creating reusable customer workshops and technical enablement content including the Vodafone commerce workshop and the AU/NZ Commerce Hub build."
+      ]
+    },
+    "google-ssc": {
+      title: "Google Senior Solutions Consultant, Singapore",
+      date: "2014 – 2018",
+      tone: "tone-blue",
+      metricLine: "$50M in new revenue across Southeast Asia",
+      roles: [
+        {
+          title: "Senior Solutions Consultant, Display Advertising",
+          meta: "Singapore | 2014 – 2018",
+          desc: "Regional pre-sales and technical specialist for dynamic integrations across Southeast Asia."
+        }
+      ],
+      bullets: [
+        "Delivered $50M in new revenue growing Google's programmatic dynamic and app remarketing business across Southeast Asia against Criteo and Meta, leading technical pre-sales and direct integrations with Traveloka, Tokopedia, JD and Bukalapak.",
+        "Channelled customer requirements into the core product roadmap across APAC, shipping two new features in Google's Shopping offer-performance reporting tool, 11 bugs and feature requests in Dynamic ads, and the first two client implementations of Google's unified ad tag before public launch."
+      ]
+    },
+    "yahoo": {
+      title: "Yahoo! India",
+      date: "2011 – 2014",
+      tone: "tone-orange",
+      metricLine: "$20M in incremental revenue across India and Southeast Asia",
+      roles: [
+        {
+          title: "Program Manager, Display Ads",
+          meta: "New Delhi, India | 2011 – 2014",
+          desc: "Launched Yahoo! Smart Ads across India and Southeast Asia, delivering $20M in incremental revenue."
+        }
+      ],
+      bullets: [
+        "Launched Yahoo! Smart Ads across India and Southeast Asia, delivering $20M in incremental revenue."
+      ]
+    },
+    "capgemini": {
+      title: "Capgemini Engineering, formerly Aricent",
+      date: "2005 – 2008",
+      tone: "tone-green",
+      metricLine: "3 years building telecom and mobile telephony systems in C",
+      roles: [
+        {
+          title: "Senior Software Engineer",
+          meta: "New Delhi and Dallas | 2005 – 2008",
+          desc: "C on Linux/Solaris for SS7 signalling and Symbian OS telephony integration on TI OMAP."
+        }
+      ],
+      bullets: [
+        "Built SS7 signalling test automation and telecom stack software in C on Linux and Solaris.",
+        "Integrated Symbian OS telephony layers on Texas Instruments OMAP mobile hardware platforms in New Delhi and Dallas."
+      ]
+    },
+    "education": {
+      title: "Education",
+      date: "MBA & BE (IT)",
+      tone: "tone-yellow",
+      metricLine: "2 degrees across business management and information technology engineering",
+      roles: [],
+      bullets: [
+        "MBA, UNSW Sydney, with exchange at Kellogg School of Management, Chicago.",
+        "Bachelor of Engineering in Information Technology (IT), Manipal Institute of Technology, Manipal, India."
+      ]
+    },
+    "awards": {
+      title: "Awards and Recognition",
+      date: "2014 – 2026",
+      tone: "tone-coral",
+      metricLine: "Nearly 150 internal awards at Google plus AI Hackathon & Hack-a-gTech wins",
+      roles: [],
+      bullets: [
+        "Won Google's internal AI Hackathon after building and sharing five-plus practical PM AI workflows across the org.",
+        "Won Hack-a-gTech 2015 for Lunch Ninja, later used by 50,000+ Alphabet employees.",
+        "Won nearly 150 internal awards at Google across business impact, community impact and new product innovation.",
+        "Won an internal automation award for Project Magnet, an automated competitive insights tool comparing the top 50 Search, Video and Display advertisers.",
+        "Received three peer bonuses plus a spot bonus during the Payments Identity Platform PM rotation."
+      ]
+    },
+    "builds": {
+      title: "Builds and Writing",
+      date: "AI Tooling & Communities",
+      tone: "tone-purple",
+      metricLine: "50,000+ Alphabet users on Lunch Ninja, plus open-source multi-agent Python packages",
+      roles: [],
+      bullets: [
+        "Published open-source Python packages including MA(h)GIC (<a href=\"https://github.com/kirtidhi/MAhGIC\" target=\"_blank\" rel=\"noopener\">github.com/kirtidhi/MAhGIC</a>), a multi-agent workflow pipeline with Claude, Gemini and OpenAI, and token-optimizer.",
+        "Built an interactive front-end HTML matching-logic simulator with AI coding tools that exposed defects in an external vendor's V1 API before launch, letting engineering validate and approve V2 for production.",
+        "Built Lunch Ninja (Hack-a-gTech 2015 winner), later used by 50,000+ Alphabet employees.",
+        "Publishes the \"Everyday AgentiK\" Substack and advises startups since July 2026."
+      ]
+    },
+    "interests": {
+      title: "Interests",
+      date: "Personal",
+      tone: "tone-green",
+      metricLine: "40+ countries across six continents including Antarctica, mostly solo",
+      roles: [],
+      bullets: [
+        "Travelled to 40+ countries across six continents including Antarctica, mostly solo.",
+        "Enjoys activities related to health and wellness, sports, biohacking, yoga and meditation."
+      ]
+    },
+    "contact": {
+      title: "Contact",
+      date: "Sydney, Australia",
+      tone: "tone-blue",
+      metricLine: "Public profile links and PDF resume download (no phone or email exposed on page)",
+      roles: [],
+      bullets: [
+        "Australian citizen based in Sydney, Australia."
+      ],
+      customHtml: `
+        <div class="contact-links">
+          <a class="contact-link-card" href="https://www.linkedin.com/in/kirtidhingra/" target="_blank" rel="noopener">
+            LinkedIn Profile &rarr;
+          </a>
+          <a class="contact-link-card" href="https://github.com/kirtidhi" target="_blank" rel="noopener">
+            GitHub (@kirtidhi) &rarr;
+          </a>
+          <a class="contact-link-card" href="Kirti_Dhingra_Resume_Figma.pdf" download="Kirti_Dhingra_Resume_Figma.pdf">
+            Download Kirti_Dhingra_Resume_Figma.pdf &darr;
+          </a>
+        </div>
+      `
+    },
+    "design-notes": {
+      title: "How I Designed This Page",
+      date: "Design Thinking",
+      tone: "tone-yellow",
+      metricLine: "4.5:1+ contrast ratio, outcome-first scanning, and zero external dependencies",
+      roles: [],
+      bullets: [
+        "<strong>1. Outcome-first progressive disclosure for multi-persona readers.</strong> Solutions Consulting deals span Design, Product, Engineering and Security buyers who scan for different signals. Each bento tile surfaces one scope period and one verified headline number up front, while expanding a tile reveals the exact resume evidence without cluttering the canvas.",
+        "<strong>2. Accessible colour tokens across light and dark modes.</strong> Every tile uses a vibrant palette (coral, orange, yellow, purple, blue, green) paired with #111315 ink to maintain a contrast ratio above 6.8:1 (exceeding the 4.5:1 WCAG AA bar) in both light and dark modes, with automatic <code>prefers-color-scheme</code> detection and a manual override.",
+        "<strong>3. Keyboard-native, zero-dependency implementation.</strong> Every tile is a semantic <code>&lt;button&gt;</code> with synchronized <code>aria-expanded</code> state, visible focus rings, <code>Esc</code> and backdrop dismissal, focus restoration on close, and <code>prefers-reduced-motion</code> support."
+      ]
+    }
+  };
+
+  const backdrop = document.getElementById("modalBackdrop");
+  const modalHeader = document.getElementById("modalHeader");
+  const modalDate = document.getElementById("modalDate");
+  const modalTitle = document.getElementById("modalTitle");
+  const modalMetricLine = document.getElementById("modalMetricLine");
+  const modalBody = document.getElementById("modalBody");
+  const closeBtn = document.getElementById("modalCloseBtn");
+  const tiles = Array.from(document.querySelectorAll(".bento-tile"));
+  let activeTrigger = null;
+
+  function openBucket(key, triggerEl) {
+    const data = BUCKETS[key];
+    if (!data) return;
+
+    activeTrigger = triggerEl;
+    tiles.forEach(t => t.setAttribute("aria-expanded", t === triggerEl ? "true" : "false"));
+
+    modalHeader.className = "modal-header " + data.tone;
+    modalDate.textContent = data.date;
+    modalTitle.textContent = data.title;
+    modalMetricLine.textContent = data.metricLine;
+
+    let html = "";
+    if (data.roles && data.roles.length > 0) {
+      html += '<div class="role-badge-list">';
+      data.roles.forEach(r => {
+        html += `
+          <div>
+            <div class="role-badge">
+              <strong>${r.title}</strong>
+              <span>${r.meta}</span>
+            </div>
+            <p class="role-desc">${r.desc}</p>
+          </div>
+        `;
+      });
+      html += "</div>";
+    }
+
+    if (data.bullets && data.bullets.length > 0) {
+      html += "<ul>";
+      data.bullets.forEach(b => {
+        html += `<li>${b}</li>`;
+      });
+      html += "</ul>";
+    }
+
+    if (data.customHtml) {
+      html += data.customHtml;
+    }
+
+    modalBody.innerHTML = html;
+    backdrop.classList.add("is-open");
+    backdrop.setAttribute("aria-hidden", "false");
+    closeBtn.focus();
+  }
+
+  function closeModal() {
+    if (!backdrop.classList.contains("is-open")) return;
+    backdrop.classList.remove("is-open");
+    backdrop.setAttribute("aria-hidden", "true");
+    tiles.forEach(t => t.setAttribute("aria-expanded", "false"));
+    if (activeTrigger) {
+      activeTrigger.focus();
+      activeTrigger = null;
+    }
+  }
+
+  tiles.forEach(tile => {
+    tile.addEventListener("click", () => {
+      const key = tile.getAttribute("data-bucket");
+      openBucket(key, tile);
+    });
+  });
+
+  closeBtn.addEventListener("click", closeModal);
+
+  backdrop.addEventListener("click", (e) => {
+    if (e.target === backdrop) {
+      closeModal();
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && backdrop.classList.contains("is-open")) {
+      e.preventDefault();
+      closeModal();
+    } else if (e.key === "Tab" && backdrop.classList.contains("is-open")) {
+      const focusable = Array.from(
+        backdrop.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  });
+
+  // Theme toggle (Auto -> Light -> Dark)
+  const themeToggle = document.getElementById("themeToggle");
+  const modes = ["auto", "light", "dark"];
+  let modeIdx = 0;
+
+  themeToggle.addEventListener("click", () => {
+    modeIdx = (modeIdx + 1) % modes.length;
+    const mode = modes[modeIdx];
+    if (mode === "auto") {
+      document.documentElement.removeAttribute("data-theme");
+      themeToggle.textContent = "Theme: Auto";
+    } else if (mode === "light") {
+      document.documentElement.setAttribute("data-theme", "light");
+      themeToggle.textContent = "Theme: Light";
+    } else {
+      document.documentElement.setAttribute("data-theme", "dark");
+      themeToggle.textContent = "Theme: Dark";
+    }
+  });
+</script>
+</body>
+</html>
